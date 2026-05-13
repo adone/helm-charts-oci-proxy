@@ -1,0 +1,10 @@
+version: 3
+
+tasks:
+  build:
+    env:
+      IMAGE: helm-charts-oci-proxy
+    cmd: goreleaser release --snapshot --clean
+
+  cleanup:
+    cmd: rm -rf dist

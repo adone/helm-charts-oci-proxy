@@ -1,0 +1,39 @@
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: release
+    binary: proxy
+    env:
+      - CGO_ENABLED=0
+    goos:   [linux, darwin]
+    goarch: [amd64, arm64]
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+dockers_v2:
+  - id: release
+    annotations:
+      "org.opencontainers.image.description": "Helm Charts OCI proxy"
+      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.title": "{{.ProjectName}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{.Version}}"
+      "org.opencontainers.image.source": "{{.GitURL}}"
+    images:
+      - "{{.Env.IMAGE}}"
+    tags:
+      - "{{.Version}}"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+
+archives:
+  - formats: binary
